@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: django-todo-app
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn todo_site.wsgi --log-file -
+    envVars:
+      - key: DEBUG
+        value: False
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: django-todo-db
+          property: connectionString
+
+databases:
+  - name: django-todo-db
+    databaseName: tododb
+    user: todo_user
