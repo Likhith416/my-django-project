@@ -1,19 +1,23 @@
+import os
+import dj_database_url
 from pathlib import Path
-from django.urls import reverse_lazy  # ✅ Add this import
+from django.urls import reverse_lazy
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-#@vj&)=)edsk*5j0%stu#^==nwetfx%6c+-87tc46i$xv3%xyp'
+# Use environment secret key for production
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-#@vj&)=)edsk*5j0%stu#^==nwetfx%6c+-87tc46i$xv3%xyp')
 
-DEBUG = True
-ALLOWED_HOSTS = []
+# DEBUG should be False in production
+DEBUG = os.environ.get('DEBUG', '') != 'False'
+
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 INSTALLED_APPS = [
     'todo',
-    'crispy_forms',                     # ✅ crispy_forms
-    'crispy_bootstrap5',                # ✅ bootstrap5 theme (optional, for better UI)
+    'crispy_forms',
+    'crispy_bootstrap5',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -24,6 +28,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -51,11 +56,13 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'todo_site.wsgi.application'
 
+# ✅ Use PostgreSQL in production via DATABASE_URL
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.config(
+        default=f'sqlite:///{BASE_DIR / "db.sqlite3"}',
+        conn_max_age=600,
+        ssl_require=True
+    )
 }
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -70,14 +77,17 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-STATIC_URL = 'static/'
+# ✅ Static files configuration
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# ✅ Add this to fix login-required redirects
+# ✅ Login redirects
 LOGIN_URL = reverse_lazy('login')
 LOGIN_REDIRECT_URL = reverse_lazy('todo')
 
-# ✅ Crispy Forms Configuration
+# ✅ Crispy Forms
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
