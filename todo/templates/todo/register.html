@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Register</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Preload dark mode before content -->
+  <script>
+    if (localStorage.getItem('darkMode') === 'true') {
+      document.documentElement.classList.add('dark-mode');
+    }
+  </script>
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #e8f5e9;
+      --box-bg: #ffffff;
+      --text: #000000;
+    }
+
+    html.dark-mode {
+      --bg: #121212;
+      --box-bg: #1f1f1f;
+      --text: #f0f0f0;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', sans-serif;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    .register-box {
+      max-width: 500px;
+      margin: 8% auto;
+      padding: 30px;
+      background-color: var(--box-bg);
+      border-radius: 15px;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+      color: var(--text);
+    }
+
+    a {
+      color: #007bff;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .dark-toggle {
+      position: fixed;
+      top: 10px;
+      right: 15px;
+      z-index: 999;
+    }
+  </style>
+</head>
+<body>
+
+<!-- 🌗 Dark Mode Toggle Button -->
+<button class="btn btn-sm btn-secondary dark-toggle" onclick="toggleDarkMode()">🌗</button>
+
+<div class="register-box">
+  <h3 class="mb-4 text-center">📝 Register</h3>
+
+  <form method="POST">
+    {% csrf_token %}
+
+    {% if form.errors %}
+      <div class="alert alert-danger">
+        <ul>
+          {% for field in form %}
+            {% for error in field.errors %}
+              <li><strong>{{ field.label }}:</strong> {{ error }}</li>
+            {% endfor %}
+          {% endfor %}
+          {% for error in form.non_field_errors %}
+            <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+
+    {{ form.as_p }}
+    
+    <div class="d-grid gap-2">
+      <button type="submit" class="btn btn-success">Sign Up</button>
+    </div>
+  </form>
+
+  <p class="text-center mt-3">Already have an account? <a href="/login/">Login</a></p>
+</div>
+
+<script>
+  function toggleDarkMode() {
+    const html = document.documentElement;
+    html.classList.toggle('dark-mode');
+    localStorage.setItem('darkMode', html.classList.contains('dark-mode'));
+  }
+
+  window.onload = () => {
+    if (localStorage.getItem('darkMode') === 'true') {
+      document.documentElement.classList.add('dark-mode');
+    }
+  };
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

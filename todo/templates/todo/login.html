@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Preload dark mode before rendering -->
+  <script>
+    if (localStorage.getItem('darkMode') === 'true') {
+      document.documentElement.classList.add('dark-mode');
+    }
+  </script>
+
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #eef3f8;
+      --box-bg: #ffffff;
+      --text: #000000;
+    }
+
+    html.dark-mode {
+      --bg: #121212;
+      --box-bg: #1f1f1f;
+      --text: #f0f0f0;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', sans-serif;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    .login-box {
+      max-width: 400px;
+      margin: 10% auto;
+      padding: 30px;
+      background-color: var(--box-bg);
+      border-radius: 15px;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+      color: var(--text);
+    }
+
+    .dark-toggle {
+      position: fixed;
+      top: 10px;
+      right: 15px;
+      z-index: 999;
+    }
+
+    a {
+      color: #0d6efd;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+<!-- 🌗 Dark Mode Toggle -->
+<button class="btn btn-sm btn-secondary dark-toggle" onclick="toggleDarkMode()">🌗</button>
+
+<div class="login-box">
+  <h3 class="mb-4 text-center">🔐 Login</h3>
+
+  {% if form.errors %}
+    <div class="alert alert-danger">Invalid username or password.</div>
+  {% endif %}
+
+  <form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <div class="d-grid gap-2">
+      <button type="submit" class="btn btn-primary">Login</button>
+    </div>
+  </form>
+
+  <p class="text-center mt-3">Don't have an account? <a href="/register/">Register</a></p>
+</div>
+
+<!-- Scripts -->
+<script>
+  function toggleDarkMode() {
+    const html = document.documentElement;
+    html.classList.toggle('dark-mode');
+    localStorage.setItem('darkMode', html.classList.contains('dark-mode'));
+  }
+
+  window.onload = () => {
+    if (localStorage.getItem('darkMode') === 'true') {
+      document.documentElement.classList.add('dark-mode');
+    }
+  };
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
