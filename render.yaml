@@ -3,7 +3,8 @@ services:
     name: django-todo-app
     env: python
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn todo_site.wsgi --log-file -
+    startCommand: gunicorn todo_site.wsgi:application
+
     envVars:
       - key: DEBUG
         value: False
